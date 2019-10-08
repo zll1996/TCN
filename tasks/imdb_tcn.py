@@ -5,7 +5,7 @@ Time per epoch on CPU (Core i7): ~64s.
 Based on: https://github.com/keras-team/keras/blob/master/examples/imdb_bidirectional_lstm.py
 """
 import numpy as np
-from keras import Model, Input
+from keras import Sequential
 from keras.datasets import imdb
 from keras.layers import Dense, Dropout, Embedding
 from keras.preprocessing import sequence
@@ -31,15 +31,13 @@ print('x_test shape:', x_test.shape)
 y_train = np.array(y_train)
 y_test = np.array(y_test)
 
-i = Input(shape=(maxlen,))
-x = Embedding(max_features, 128)(i)
-x = TCN(nb_filters=64,
-        kernel_size=6,
-        dilations=[1, 2, 4, 8, 16, 32, 64])(x)
-x = Dropout(0.5)(x)
-x = Dense(1, activation='sigmoid')(x)
-
-model = Model(inputs=[i], outputs=[x])
+model = Sequential()
+model.add(Embedding(max_features, 128, input_shape=(maxlen,)))
+model.add(TCN(nb_filters=64,
+              kernel_size=6,
+              dilations=[1, 2, 4, 8, 16, 32, 64]))
+model.add(Dropout(0.5))
+model.add(Dense(1, activation='sigmoid'))
 
 model.summary()
 
